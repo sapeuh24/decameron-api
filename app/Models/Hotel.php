@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $nombre
  * @property string $direccion
- * @property string $ciudad
+ * @property int $municipio_id
  * @property string $nit
  * @property int $numero_habitaciones
  * @property \Illuminate\Support\Carbon $created_at
@@ -24,6 +24,13 @@ class Hotel extends Model
     use HasFactory;
 
     /**
+     * apuntamiento a la tabla hoteles
+     *
+     * @var string
+     */
+    protected $table = "hoteles";
+
+    /**
      * Los atributos que se pueden asignar masivamente.
      *
      * @var array<string>
@@ -31,7 +38,7 @@ class Hotel extends Model
     protected $fillable = [
         'nombre',
         'direccion',
-        'ciudad',
+        'municipio_id',
         'nit',
         'numero_habitaciones',
     ];
