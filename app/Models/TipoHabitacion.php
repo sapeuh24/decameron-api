@@ -19,6 +19,8 @@ class TipoHabitacion extends Model
 {
     use HasFactory;
 
+    protected $table = 'tipos_habitacion';
+
     /**
      * Los atributos que se pueden asignar masivamente.
      *

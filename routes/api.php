@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HotelController;
+use App\Http\Controllers\Api\HabitacionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('hoteles', HotelController::class);
+
+Route::put('/habitaciones', [HabitacionController::class, 'update']);
+Route::get('/habitaciones/hotel/{hotel_id}', [HabitacionController::class, 'getByHotel']);

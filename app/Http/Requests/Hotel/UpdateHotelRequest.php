@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Hotel;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateHotelRequest extends FormRequest
 {
@@ -14,9 +15,22 @@ class UpdateHotelRequest extends FormRequest
     public function rules()
     {
         return [
-            'nombre' => 'sometimes|string|max:100',
+            'nombre' => [
+                'sometimes',
+                'string',
+                'max:100',
+                Rule::unique('hoteles')->ignore($this->route('hotel'))->where(function ($query) {
+                    return $query->where('municipio_id', $this->municipio_id)
+                                 ->where('nit', $this->nit)
+                                 ->where('direccion', $this->direccion);
+                }),
+            ],
             'direccion' => 'sometimes|string|max:200',
-            'ciudad' => 'sometimes|string|max:100',
+            'municipio_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('municipios', 'id_municipio'),
+            ],
             'nit' => 'sometimes|string|max:20',
             'numero_habitaciones' => 'sometimes|integer|min:1',
         ];
@@ -27,12 +41,13 @@ class UpdateHotelRequest extends FormRequest
         return [
             'nombre.string' => 'El nombre del hotel debe ser una cadena de texto.',
             'nombre.max' => 'El nombre del hotel no puede tener más de 100 caracteres.',
+            'nombre.unique' => 'Ya existe un hotel con el mismo nombre, NIT, municipio y dirección.',
 
             'direccion.string' => 'La dirección del hotel debe ser una cadena de texto.',
             'direccion.max' => 'La dirección del hotel no puede tener más de 200 caracteres.',
 
-            'ciudad.string' => 'La ciudad del hotel debe ser una cadena de texto.',
-            'ciudad.max' => 'La ciudad del hotel no puede tener más de 100 caracteres.',
+            'municipio_id.integer' => 'El ID del municipio debe ser un número entero.',
+            'municipio_id.exists' => 'El municipio seleccionado no existe.',
 
             'nit.string' => 'El NIT del hotel debe ser una cadena de texto.',
             'nit.max' => 'El NIT del hotel no puede tener más de 20 caracteres.',

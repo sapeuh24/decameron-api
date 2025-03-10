@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\HotelRepository;
-use Illuminate\Database\Eloquent\Collection;
-use App\Models\Hotel;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class HotelService
 {
@@ -15,28 +14,56 @@ class HotelService
         $this->hotelRepository = $hotelRepository;
     }
 
-    public function getAllHotels(): Collection
+    public function getAllHotels()
     {
         return $this->hotelRepository->all();
     }
 
-    public function getHotelById(int $id): ?Hotel
+    public function getHotelById($id)
     {
-        return $this->hotelRepository->find($id);
+        $hotel = $this->hotelRepository->find($id);
+
+        if (!$hotel) {
+            throw new ModelNotFoundException('Hotel no encontrado.');
+        }
+
+        return $hotel;
     }
 
-    public function createHotel(array $data): Hotel
+    public function createHotel(array $data)
     {
-        return $this->hotelRepository->create($data);
+        $hotel = $this->hotelRepository->create($data);
+
+        return [
+            'message' => 'Hotel registrado correctamente.',
+            'data' => $hotel
+        ];
     }
 
-    public function updateHotel(int $id, array $data): bool
+    public function updateHotel($id, array $data)
     {
-        return $this->hotelRepository->update($id, $data);
+        $updated = $this->hotelRepository->update($id, $data);
+
+        if (!$updated) {
+            throw new ModelNotFoundException('Hotel no encontrado.');
+        }
+
+        return [
+            'message' => 'Hotel actualizado correctamente.',
+            'data' => $this->hotelRepository->find($id)
+        ];
     }
 
-    public function deleteHotel(int $id): bool
+    public function deleteHotel($id)
     {
-        return $this->hotelRepository->delete($id);
+        $deleted = $this->hotelRepository->delete($id);
+
+        if (!$deleted) {
+            throw new ModelNotFoundException('Hotel no encontrado.');
+        }
+
+        return [
+            'message' => 'Hotel eliminado correctamente.'
+        ];
     }
 }
