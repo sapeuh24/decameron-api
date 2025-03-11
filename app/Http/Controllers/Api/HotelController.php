@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Hotel\StoreHotelRequest;
 use App\Http\Requests\Hotel\UpdateHotelRequest;
 use App\Services\HotelService;
+use App\Models\Hotel;
 
 class HotelController extends Controller
 {
@@ -21,7 +22,7 @@ class HotelController extends Controller
      */
     public function index()
     {
-        return $this->hotelService->getAllHotels();
+        return response()->json(Hotel::with('municipio')->get());
     }
 
     /**

@@ -33,8 +33,20 @@ class HabitacionRequest extends FormRequest
             ],
             'habitaciones.*.cantidad' => ['required', 'integer', 'min:1'],
             'habitaciones' => [function ($attribute, $value, $fail) {
+                // Verificar que $value sea un array
+                if (!is_array($value)) {
+                    $fail('El formato de habitaciones no es válido.');
+                    return;
+                }
+
                 $combos = [];
                 foreach ($value as $habitacion) {
+                    // Verificar que $habitacion sea un array y tenga la clave 'acomodacion_tipo_id'
+                    if (!is_array($habitacion) || !isset($habitacion['acomodacion_tipo_id'])) {
+                        $fail('El formato de habitaciones no es válido.');
+                        return;
+                    }
+
                     $key = $habitacion['acomodacion_tipo_id'];
                     if (isset($combos[$key])) {
                         $fail('No debe haber tipos de habitaciones y acomodaciones repetidas para el mismo hotel.');
@@ -70,5 +82,17 @@ class HabitacionRequest extends FormRequest
 
             'habitaciones' => 'No debe haber tipos de habitaciones y acomodaciones repetidas para el mismo hotel.'
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        if ($this->has('habitaciones.hotel_id') && $this->has('habitaciones.habitaciones')) {
+            $this->merge([
+                'hotel_id' => $this->input('habitaciones.hotel_id'),
+                'habitaciones' => $this->input('habitaciones.habitaciones'),
+            ]);
+        }
+
+        return $this->all();
     }
 }

@@ -16,12 +16,12 @@ class HotelRepository
 
     public function all(): Collection
     {
-        return $this->model->all();
+        return $this->model->with('municipio')->get();
     }
 
     public function find(int $id): ?Hotel
     {
-        return $this->model->find($id);
+        return $this->model->with('municipio')->find($id);
     }
 
     public function create(array $data): Hotel
